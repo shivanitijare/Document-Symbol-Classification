@@ -1,1 +1,5 @@
 /venv
+/symbols
+/train
+/val
+/templates
