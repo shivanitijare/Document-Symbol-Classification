@@ -1,17 +1,12 @@
 import os
 import argparse
+from PIL import Image
 import PIL
-import matplotlib.pyplot as plt
 import numpy as np
 import argparse
 import cv2
 import re
-from sklearn.preprocessing import LabelBinarizer
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import classification_report
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense
-from tensorflow.keras.optimizers import SGD
+from tensorflow.python.keras import models
 
 #extract the arguments 
 parser = argparse.ArgumentParser(description=
@@ -69,83 +64,28 @@ if args.task == 'classify':
 
 
 # function to preprocess the image
-def preprocess_image(image):
+def read_image(folder):
+    pass
+    
+def fit():
+    pass
+
+def classify(img_path):
+    pass   
+
+def evaluate():
+    pass
 
 
-# Read images from dataset
-data, labels = [], []
-main = "test-subset/"
-folder = [os.path.join(main, folder) for folder in os.listdir(main)]
-symbols = [os.path.join(d,f) for d in folder for f in os.listdir(d)]
+# call functions based on --task values
+if args.task == 'augment_img':
+    augment(aug_path)
 
-for symbol in symbols:
-    image = cv2.imread(symbol)
-    image = cv2.resize(image, (32, 32)).flatten()
-    data.append(image)
-    label = symbol.split(os.path.sep)[-2].split(".")[0]
-    label = re.sub('\_\d*', '', label)
-    labels.append(label)
-
-
-# Preprocessing - uniform dimensions? image enhancement?
-## scale the raw pixel intensities to the range [0, 1]
-data = np.array(data) / 255.0
-labels = np.array(labels)
-
-(trainX, testX, trainY, testY) = train_test_split(data,
-	labels, test_size=0.25, random_state=42)
-
-# convert the labels from integers to vectors (for 2-class, binary
-# classification you should use Keras' to_categorical function
-# instead as the scikit-learn's LabelBinarizer will not return a
-# vector)
-lb = LabelBinarizer()
-trainY = lb.fit_transform(trainY)
-testY = lb.transform(testY)
-
-# consult_ifu [1 0 0 0]
-# do_not_resterilize [0 1 0 0]
-# skeep_dry [0 0 1 0] 
-# sterile [0 0 0 1] 
-
-
-
-model = Sequential()
-model.add(Dense(1024, input_shape=(3072,), activation="sigmoid"))
-model.add(Dense(512, activation="sigmoid"))
-model.add(Dense(len(lb.classes_), activation="softmax"))
-
-# initialize our initial learning rate and # of epochs to train for
-INIT_LR = 0.01
-EPOCHS = 10
-# compile the model using SGD as our optimizer and categorical
-# cross-entropy loss (you'll want to use binary_crossentropy
-# for 2-class classification)
-print("[INFO] training network...")
-opt = SGD(lr=INIT_LR)
-model.compile(loss="categorical_crossentropy", optimizer=opt,
-	metrics=["accuracy"])
-
-# train the neural network
-H = model.fit(x=trainX, y=trainY, validation_data=(testX, testY),
-	epochs=EPOCHS, batch_size=32)
-
-# evaluate the network
-print("[INFO] evaluating network...")
-predictions = model.predict(x=testX, batch_size=32)
-print(classification_report(testY.argmax(axis=1),
-	predictions.argmax(axis=1), target_names=lb.classes_))
-
-
-# plot the training loss and accuracy
-N = np.arange(0, EPOCHS)
-plt.style.use("ggplot")
-plt.figure()
-plt.plot(N, H.history["loss"], label="train_loss")
-plt.plot(N, H.history["val_loss"], label="val_loss")
-plt.plot(N, H.history["accuracy"], label="train_acc")
-plt.plot(N, H.history["val_accuracy"], label="val_acc")
-plt.title("Training Loss and Accuracy on Dataset")
-plt.xlabel("Epoch #")
-plt.ylabel("Loss/Accuracy")
-plt.legend(loc="lower left")
+elif args.task == 'fit':
+    fit()
+  
+elif args.task == 'classify':
+    classify(img_path)
+    
+elif args.task == 'evaluate':
+    evaluate()
