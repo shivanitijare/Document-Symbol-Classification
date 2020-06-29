@@ -10,7 +10,7 @@ from tensorflow.python.keras import models
 
 #extract the arguments 
 parser = argparse.ArgumentParser(description=
-'Augment images, fit the classifier, evaluate accuracy or predict class of symbol')
+'Segment a document, fit the classifier, evaluate accuracy or predict class of symbol')
 
 parser.add_argument('--task', type=str, default='pass',
                     help="""
@@ -21,9 +21,9 @@ parser.add_argument('--task', type=str, default='pass',
                     classify-->predict the probability that the image is from the possible classes
                     """)
 
-parser.add_argument('--aug', type=str, default=None,
+parser.add_argument('--segment', type=str, default=None,
                     help="""
-                    Path of the image when we want to perform data augmentation
+                    Path of the image when we want to perform document segmentation
                     """)
 
 parser.add_argument('--evaluate_directory', type=str, default='test',
@@ -39,13 +39,13 @@ parser.add_argument('--img', type=str, default=None,
 args = parser.parse_args()
 
 #checking the format of given arguments
-if args.task not in ['augment_img', 'fit', 'evaluate', 'classify']:
+if args.task not in ['segment', 'fit', 'evaluate', 'classify']:
     print('Task not supported!')
     args.task = 'pass'
 
-if args.task == 'augment_img':    
-    if os.path.exists(args.aug):
-        aug_path = args.aug
+if args.task == 'segment':    
+    if os.path.exists(args.seg):
+        seg_path = args.seg
     else:
         print('Unknown path!')
         args.task = 'pass'
@@ -66,20 +66,30 @@ if args.task == 'classify':
 # function to preprocess the image
 def read_image(folder):
     pass
-    
+
+'''
+- function to fit a model with new data
+- function calls read_image to read images
+- import saved model and fit the new images
+'''
 def fit():
     pass
 
+# function to classify a symbol
 def classify(img_path):
     pass   
 
+# testing function to calculate accuracy of model
 def evaluate():
     pass
 
+# pass the input document to the localization script
+def segment():
+    pass
 
 # call functions based on --task values
-if args.task == 'augment_img':
-    augment(aug_path)
+if args.task == 'segment':
+    segment(seg_path)
 
 elif args.task == 'fit':
     fit()
