@@ -10,6 +10,15 @@ import os
 from skimage.morphology import reconstruction
 
 
+
+# GOALS
+# 1) Figure out what Sobel filter is supposed to do (particularly the #s)
+# 2) Figure out how to set T1 (10% of max gradient value) (Shivani)
+# 3) Actually do dilate & reconstruction (Nihal)
+# 4) Figure out how to get local minima so that watershed algorithm accepts it (Silvi)
+
+
+
 # Loads all images from folder
 def load_images_from_folder(folder):
     images = []
@@ -80,7 +89,7 @@ for img in images:
 
 
 # Load UDI sample img
-img = cv2.imread('Sample Labels/UDI_label_.png')
+img = cv2.imread('Sample Labels/375_250-udi_sample.jpg')
 img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
 # Run 3x3 Sobel Filter on image to get gradient
@@ -98,8 +107,8 @@ cv2.waitKey(0)
 # Change inverted gradient to a float
 # grad_inverted_float = img_as_float(grad_inverted)
 
-# Subtract height threshold T1 from inverted gradient
-T1 = 65
+# Subtract height threshold T1 from inverted gradient (in study: 65)
+T1 = 80
 
 # Using OpenCV
 grad_subtracted_cv = cv2.subtract(grad_inverted, T1)
@@ -229,7 +238,7 @@ labeledConnectedComponents = np.copy(stats)
 print(watershed_complement.shape)
 images = 0
 for stat in stats:
-    if stat[cv2.CC_STAT_AREA] >= 20:
+    if stat[cv2.CC_STAT_AREA] >= T2:
         images += 1
         for i in range(stat[cv2.CC_STAT_LEFT], stat[cv2.CC_STAT_LEFT] + stat[cv2.CC_STAT_WIDTH] - 1):
             # Top line of bounding box
